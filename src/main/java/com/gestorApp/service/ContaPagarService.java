@@ -1,2 +1,8 @@
-package com.gestorApp.service;public interface ContaPagarService {
+package com.gestorApp.service;
+
+import com.gestorApp.payload.ContaPagaDto;
+
+public interface ContaPagarService {
+
+    ContaPagaDto createContaPagar(ContaPagaDto contaPagaDto);
 }
