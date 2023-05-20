@@ -8,6 +8,9 @@ import com.gestorApp.service.ContaPagarService;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,16 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         ContasPagar newContaPagar = contaPagarRepositoy.save(contaPagar);
 
         return mapToDto(newContaPagar);
+    }
+
+    @Override
+    public List<ContaPagaDto> getAllContasPagar() {
+        
+        List<ContasPagar> contasPagar = contaPagarRepositoy.findAll();
+
+        List<ContaPagaDto> response = contasPagar.stream().map(contaPagar -> mapToDto(contaPagar)).collect(Collectors.toList());
+        
+        return response;
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
@@ -83,4 +96,6 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+    
 }
