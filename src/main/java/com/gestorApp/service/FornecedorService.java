@@ -3,6 +3,7 @@ package com.gestorApp.service;
 import java.util.List;
 
 import com.gestorApp.payload.FornecedorDto;
+import com.gestorApp.payload.FornecedorResponse;
 
 public interface FornecedorService {
     
@@ -15,6 +16,6 @@ public interface FornecedorService {
     FornecedorDto updateFornecedorByid(long fornecedorId, FornecedorDto fornecedorDto);
 
     void deleteFornecedorById(long fornecedorId);
-
-    List<FornecedorDto> buscarFornecedores(String nome, String cnpj, int pageNo, int pageSize, String sortBy);
+    
+    FornecedorResponse buscarFornecedores(String nome, String cnpj, int pageNo, int pageSize, String sortBy);
 }

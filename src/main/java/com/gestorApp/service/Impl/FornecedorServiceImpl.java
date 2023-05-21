@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.gestorApp.entity.Fornecedor;
 import com.gestorApp.exception.ResourceNotFoundException;
 import com.gestorApp.payload.FornecedorDto;
+import com.gestorApp.payload.FornecedorResponse;
 import com.gestorApp.repository.FornecedorRepository;
 import com.gestorApp.service.FornecedorService;
 
@@ -115,7 +116,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
-    public List<FornecedorDto> buscarFornecedores(String nome, String cnpj, int pageNo, int pageSize, String sortBy) {
+    public FornecedorResponse buscarFornecedores(String nome, String cnpj, int pageNo, int pageSize, String sortBy) {
         
         Specification<Fornecedor> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -132,9 +133,20 @@ public class FornecedorServiceImpl implements FornecedorService {
 
         Page<Fornecedor> busca = fornecedorRepository.findAll(spec, pageable);
 
-        List<FornecedorDto> response = busca.stream().map(fornecedor -> mapToDto(fornecedor)).collect(Collectors.toList());
+        List<Fornecedor> listOfFornecedores = busca.getContent();
 
-        return response;
+        List<FornecedorDto> content = listOfFornecedores.stream().map(fornecedor -> mapToDto(fornecedor)).collect(Collectors.toList());
+
+        FornecedorResponse fornecedorResponse = new FornecedorResponse();
+
+        fornecedorResponse.setContent(content);
+        fornecedorResponse.setPageNo(busca.getNumber());
+        fornecedorResponse.setPageSize(busca.getSize());
+        fornecedorResponse.setTotalElements(busca.getTotalElements());
+        fornecedorResponse.setTotalPages(busca.getTotalPages());
+        fornecedorResponse.setLast(busca.isLast());
+
+        return fornecedorResponse;
     }
 
     private Fornecedor mapToEntity(FornecedorDto fornecedorDto){

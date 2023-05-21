@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gestorApp.payload.FornecedorDto;
+import com.gestorApp.payload.FornecedorResponse;
 import com.gestorApp.service.FornecedorService;
 
 @RestController
@@ -66,7 +67,7 @@ public class FornecedorController {
     }
 
     @GetMapping("/busca")
-    public List<FornecedorDto> buscarFornecedores(
+    public ResponseEntity<FornecedorResponse> buscarFornecedores(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String cnpj,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
@@ -74,6 +75,9 @@ public class FornecedorController {
             @RequestParam(value = "sortBy", defaultValue = "asc", required = false) String sortBy
             
     ) {
-        return fornecedorService.buscarFornecedores(nome, cnpj, pageNo, pageSize, sortBy);
+
+        FornecedorResponse response = fornecedorService.buscarFornecedores(nome, cnpj, pageNo, pageSize, sortBy);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
