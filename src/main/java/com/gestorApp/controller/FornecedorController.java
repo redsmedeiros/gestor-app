@@ -68,8 +68,12 @@ public class FornecedorController {
     @GetMapping("/busca")
     public List<FornecedorDto> buscarFornecedores(
             @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String cnpj
+            @RequestParam(required = false) String cnpj,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "asc", required = false) String sortBy
+            
     ) {
-        return fornecedorService.buscarFornecedores(nome, cnpj);
+        return fornecedorService.buscarFornecedores(nome, cnpj, pageNo, pageSize, sortBy);
     }
 }

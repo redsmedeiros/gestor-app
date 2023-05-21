@@ -16,5 +16,5 @@ public interface FornecedorService {
 
     void deleteFornecedorById(long fornecedorId);
 
-    List<FornecedorDto> buscarFornecedores(String nome, String cnpj);
+    List<FornecedorDto> buscarFornecedores(String nome, String cnpj, int pageNo, int pageSize, String sortBy);
 }
