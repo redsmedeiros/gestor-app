@@ -1,9 +1,11 @@
 package com.gestorApp.service.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gestorApp.entity.Fornecedor;
@@ -13,6 +15,7 @@ import com.gestorApp.repository.FornecedorRepository;
 import com.gestorApp.service.FornecedorService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class FornecedorServiceImpl implements FornecedorService {
@@ -57,6 +60,78 @@ public class FornecedorServiceImpl implements FornecedorService {
         return mapToDto(fornecedor);
     }
 
+    @Override
+    public FornecedorDto updateFornecedorByid(long fornecedorId, FornecedorDto fornecedorDto) {
+        
+        Fornecedor cnpjExits = fornecedorRepository.findByCnpj(fornecedorDto.getCnpj());
+
+        if(cnpjExits != null){
+            
+            throw new EntityNotFoundException("CNPj já cadastrado"); 
+        }
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+
+        if(fornecedorDto.getNome() != null){
+            
+            fornecedor.setNome(fornecedorDto.getNome());
+        }
+
+        if(fornecedorDto.getCnpj() != null){
+
+            fornecedor.setCnpj(fornecedorDto.getCnpj());
+        }
+       
+        if(fornecedorDto.getEmail() != null){
+
+            fornecedor.setEmail(fornecedorDto.getEmail());
+        }
+
+        if(fornecedorDto.getEndereco() != null){
+
+            fornecedor.setEndereco(fornecedorDto.getEndereco());
+        }
+
+        if(fornecedorDto.getTelefone() != null){
+
+            fornecedor.setTelefone(fornecedorDto.getTelefone());
+        }
+
+        Fornecedor updatedFornecedor = fornecedorRepository.save(fornecedor); 
+
+        return mapToDto(updatedFornecedor);
+    }
+
+    @Override
+    public void deleteFornecedorById(long fornecedorId) {
+        
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+
+
+        fornecedorRepository.delete(fornecedor);
+    }
+
+    @Override
+    public List<FornecedorDto> buscarFornecedores(String nome, String cnpj) {
+        
+        Specification<Fornecedor> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (nome != null) {
+                predicates.add(criteriaBuilder.equal(root.get("nome"), nome));
+            }
+            if (cnpj != null) {
+                predicates.add(criteriaBuilder.equal(root.get("cnpj"), cnpj));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        List<Fornecedor> busca = fornecedorRepository.findAll(spec);
+
+        List<FornecedorDto> response = busca.stream().map(fornecedor -> mapToDto(fornecedor)).collect(Collectors.toList());
+
+        return response;
+    }
+
     private Fornecedor mapToEntity(FornecedorDto fornecedorDto){
 
         Fornecedor fornecedor = new Fornecedor();
@@ -84,6 +159,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 
         return fornecedorDto;
     }
+
+    
+
+   
+
+   
 
     
 

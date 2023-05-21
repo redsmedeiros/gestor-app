@@ -11,4 +11,10 @@ public interface FornecedorService {
     List<FornecedorDto> getAllFornecedores();
 
     FornecedorDto getFornecedorById(long fornecedorId);
+
+    FornecedorDto updateFornecedorByid(long fornecedorId, FornecedorDto fornecedorDto);
+
+    void deleteFornecedorById(long fornecedorId);
+
+    List<FornecedorDto> buscarFornecedores(String nome, String cnpj);
 }
