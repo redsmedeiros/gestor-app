@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gestorApp.payload.FornecedorDto;
 import com.gestorApp.payload.FornecedorResponse;
 import com.gestorApp.service.FornecedorService;
+import com.gestorApp.utils.AppConstants;
 
 @RestController
 @RequestMapping("/api/fornecedor")
@@ -70,13 +71,14 @@ public class FornecedorController {
     public ResponseEntity<FornecedorResponse> buscarFornecedores(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String cnpj,
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "asc", required = false) String sortBy
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
             
     ) {
 
-        FornecedorResponse response = fornecedorService.buscarFornecedores(nome, cnpj, pageNo, pageSize, sortBy);
+        FornecedorResponse response = fornecedorService.buscarFornecedores(nome, cnpj, pageNo, pageSize, sortBy, sortDir);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
