@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gestorApp.payload.ContaPagaDto;
+import com.gestorApp.payload.ContaPagarResponse;
 import com.gestorApp.service.ContaPagarService;
+import com.gestorApp.utils.AppConstants;
 
 import java.util.List;
 
@@ -36,5 +39,20 @@ public class ContasPagarController {
         List<ContaPagaDto> response = contaPagarService.getAllContasPagar();
 
         return response;
+   }
+
+   public ResponseEntity<ContaPagarResponse> findAllContas(
+        @RequestParam(required = false) String fornecedor,
+        @RequestParam(required = false) String statusPagamento,
+        @RequestParam(required = false) String responsavel,
+        @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+        @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+        @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+        @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+   ){
+
+        ContaPagarResponse response = contaPagarService.findAllContaPagar(fornecedor, statusPagamento, responsavel, pageNo, pageSize, sortBy, sortDir);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
    }
 }

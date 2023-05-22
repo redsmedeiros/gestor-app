@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
@@ -78,9 +82,28 @@ public class ContaPagarServiceImpl implements ContaPagarService {
 
                     return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
                 };
+
+                Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+                Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+                Page<ContasPagar> busca = contaPagarRepositoy.findAll(spec, pageable);
+
+                List<ContasPagar> listOfContas = busca.getContent();
+
+                List<ContaPagaDto> content = listOfContas.stream().map(contaPagar -> mapToDto(contaPagar)).collect(Collectors.toList());
+
+                ContaPagarResponse contaPagarResponse = new ContaPagarResponse();
+
+                contaPagarResponse.setContent(content);
+                contaPagarResponse.setPageNo(busca.getNumber());
+                contaPagarResponse.setPageSize(busca.getSize());
+                contaPagarResponse.setTotalElements(busca.getTotalElements());
+                contaPagarResponse.setTotalPages(busca.getTotalPages());
+                contaPagarResponse.setLast(busca.isLast());
        
         
-        return null;
+        return contaPagarResponse;
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
