@@ -33,7 +33,7 @@ public class ContasPagar {
     private double valorPago;
 
     @Column(name = "valor_em_aberto")
-    private double valorEmAberto;
+    private Double valorEmAberto;
 
     @Column(name = "status_pagamento")
     private String statusPagamento;

@@ -17,11 +17,11 @@ public class ContaPagaDto {
 
     private String descricao;
 
-    private double valorOriginal;
+    private Double valorOriginal;
 
-    private double valorPago;
+    private Double valorPago;
 
-    private double valorEmAberto;
+    private Double valorEmAberto;
 
     private String statusPagamento;
 

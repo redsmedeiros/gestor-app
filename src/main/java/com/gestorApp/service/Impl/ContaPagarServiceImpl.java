@@ -3,6 +3,7 @@ package com.gestorApp.service.Impl;
 import com.gestorApp.entity.ContasPagar;
 import com.gestorApp.entity.Fornecedor;
 import com.gestorApp.enums.StatusPagamento;
+import com.gestorApp.exception.GestorApiException;
 import com.gestorApp.exception.ResourceNotFoundException;
 import com.gestorApp.payload.ContaPagaDto;
 import com.gestorApp.payload.ContaPagarResponse;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.util.Predicates;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -168,10 +168,91 @@ public class ContaPagarServiceImpl implements ContaPagarService {
 
         Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
         
-        if(conta.getFornecedor().getId().equals(fornecedor.getId())){
+        if(!conta.getFornecedor().getId().equals(fornecedor.getId())){
 
-
+            throw new GestorApiException(HttpStatus.BAD_REQUEST, "Conta não pertence ao fornecedor");
         }
+
+        return mapToDto(conta);
+    }
+
+    @Override
+    public ContaPagaDto updateContaById(long fornecedorId, long contaPagarId, ContaPagaDto contaPagaDto) {
+        
+        ContasPagar conta = contaPagarRepositoy.findById(contaPagarId).orElseThrow(()-> new ResourceNotFoundException("contaPagarId", "id", contaPagarId));
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+        
+        if(!conta.getFornecedor().getId().equals(fornecedor.getId())){
+
+            throw new GestorApiException(HttpStatus.BAD_REQUEST, "Conta não pertence ao fornecedor");
+        }
+
+        ContasPagar contaExists = contaPagarRepositoy.findByNumeroReferencia(contaPagaDto.getNumeroReferencia());
+
+        if(contaExists != null){
+
+            throw new EntityNotFoundException("Nota fiscal não casatrada");
+        }
+
+        if(contaPagaDto.getDataEmissao() != null){
+
+            conta.setDataEmissao(contaPagaDto.getDataEmissao());
+        }
+
+        if(contaPagaDto.getDataVencimento() != null){
+
+            conta.setDataVencimento(contaPagaDto.getDataVencimento());
+        }
+
+        if(contaPagaDto.getDescricao() != null){
+
+            conta.setDescricao(contaPagaDto.getDescricao());
+        }
+
+        if(contaPagaDto.getValorOriginal() != null){
+
+            conta.setValorOriginal(contaPagaDto.getValorOriginal());
+        }
+
+        if(contaPagaDto.getValorPago() != null){
+
+            conta.setValorPago(contaPagaDto.getValorPago());
+        }
+
+        if(contaPagaDto.getValorEmAberto() != null){
+
+            conta.setValorEmAberto(contaPagaDto.getValorEmAberto());
+        }
+
+        if(contaPagaDto.getMetodoPagamento() != null){
+
+            conta.setMetodoPagamento(contaPagaDto.getMetodoPagamento());
+        }
+
+        if(contaPagaDto.getNumeroReferencia() != null){
+
+            conta.setNumeroReferencia(contaPagaDto.getNumeroReferencia());
+        }
+
+        if(contaPagaDto.getNotas() != null){
+
+            conta.setNotas(contaPagaDto.getNotas());
+        }
+
+        Integer prioridade = contaPagaDto.getPrioridade();
+
+        if(prioridade != null){
+
+            conta.setPrioridade(contaPagaDto.getPrioridade());
+        }
+
+        if(conta.getDepartamento() != null){
+
+            conta.setPrioridade(contaPagaDto.getPrioridade());
+        }
+
+        
 
         return null;
     }
@@ -224,6 +305,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+  
 
     
 

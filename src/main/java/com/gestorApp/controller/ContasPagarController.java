@@ -46,14 +46,8 @@ public class ContasPagarController {
           return response;
     }
 
-    @GetMapping
-    public List<ContaPagaDto> getAllContasPagar(){
 
-        List<ContaPagaDto> response = contaPagarService.getAllContasPagar();
-
-        return response;
-   }
-
+   @GetMapping
    public ResponseEntity<ContaPagarResponse> findAllContas(
         @RequestParam(required = false) String fornecedor,
         @RequestParam(required = false) String statusPagamento,
@@ -67,5 +61,13 @@ public class ContasPagarController {
         ContaPagarResponse response = contaPagarService.findAllContaPagar(fornecedor, statusPagamento, responsavel, pageNo, pageSize, sortBy, sortDir);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+   }
+
+   @GetMapping("/fornecedor/{fornecedorId}/contas-pagar/{contaPagarId}")
+   public ResponseEntity<ContaPagaDto> getContaById(@PathVariable(value = "fornecedorId") long fornecedorId, @PathVariable(value = "contaPagarId") long contaPagarId){
+
+          ContaPagaDto response = contaPagarService.findContaById(fornecedorId, contaPagarId);
+
+          return new ResponseEntity<>(response, HttpStatus.OK);
    }
 }

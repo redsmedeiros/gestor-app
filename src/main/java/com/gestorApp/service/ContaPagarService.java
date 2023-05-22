@@ -16,4 +16,6 @@ public interface ContaPagarService {
     List<ContaPagaDto> findAllContaByFornecedorid(long fornecedorId, String statusPagamento, String dataVencimento);
 
     ContaPagaDto findContaById(long fornecedorId, long contaId);
+
+    ContaPagaDto updateContaById(long fornecedorId, long contaPagarId, ContaPagaDto contaPagaDto);
 }
