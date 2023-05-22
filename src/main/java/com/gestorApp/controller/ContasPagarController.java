@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +19,16 @@ import com.gestorApp.utils.AppConstants;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/conta-pagar")
+@RequestMapping("/api/")
 public class ContasPagarController {
     
     @Autowired
     private ContaPagarService contaPagarService;
 
-    @PostMapping
-    public ResponseEntity<ContaPagaDto> createConta(@RequestBody ContaPagaDto contaPagaDto){
+    @PostMapping("/fornecedor/{fornecedorId}/contas-pagar")
+    public ResponseEntity<ContaPagaDto> createConta(@PathVariable(value = "fornecedorId") long fornecedorId , @RequestBody ContaPagaDto contaPagaDto){
 
-        ContaPagaDto response = contaPagarService.createContaPagar(contaPagaDto);
+        ContaPagaDto response = contaPagarService.createContaPagar(fornecedorId ,contaPagaDto);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 

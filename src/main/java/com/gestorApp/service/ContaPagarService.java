@@ -7,7 +7,7 @@ import com.gestorApp.payload.ContaPagarResponse;
 
 public interface ContaPagarService {
 
-    ContaPagaDto createContaPagar(ContaPagaDto contaPagaDto);
+    ContaPagaDto createContaPagar(long fornecedorId, ContaPagaDto contaPagaDto);
 
     List<ContaPagaDto> getAllContasPagar();
 

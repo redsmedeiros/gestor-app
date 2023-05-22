@@ -3,9 +3,11 @@ package com.gestorApp.service.Impl;
 import com.gestorApp.entity.ContasPagar;
 import com.gestorApp.entity.Fornecedor;
 import com.gestorApp.enums.StatusPagamento;
+import com.gestorApp.exception.ResourceNotFoundException;
 import com.gestorApp.payload.ContaPagaDto;
 import com.gestorApp.payload.ContaPagarResponse;
 import com.gestorApp.repository.ContaPagarRepositoy;
+import com.gestorApp.repository.FornecedorRepository;
 import com.gestorApp.service.ContaPagarService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -30,8 +32,13 @@ public class ContaPagarServiceImpl implements ContaPagarService {
     @Autowired
     private ContaPagarRepositoy contaPagarRepositoy;
 
+    @Autowired
+    private FornecedorRepository fornecedorRepository;
+
     @Override
-    public ContaPagaDto createContaPagar(ContaPagaDto contaPagaDto) {
+    public ContaPagaDto createContaPagar(long fornecedorId ,ContaPagaDto contaPagaDto) {
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "null", fornecedorId));
 
         ContasPagar contaPagar = mapToEntity(contaPagaDto);
 
@@ -40,6 +47,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         if(notaExiste != null){
             throw new EntityNotFoundException("Nota não encontrada");
         }
+
+        contaPagar.setFornecedor(fornecedor);
 
         ContasPagar newContaPagar = contaPagarRepositoy.save(contaPagar);
 
