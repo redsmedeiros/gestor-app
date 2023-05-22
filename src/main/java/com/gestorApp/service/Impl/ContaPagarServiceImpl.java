@@ -1,17 +1,23 @@
 package com.gestorApp.service.Impl;
 
 import com.gestorApp.entity.ContasPagar;
+import com.gestorApp.entity.Fornecedor;
 import com.gestorApp.enums.StatusPagamento;
 import com.gestorApp.payload.ContaPagaDto;
+import com.gestorApp.payload.ContaPagarResponse;
 import com.gestorApp.repository.ContaPagarRepositoy;
 import com.gestorApp.service.ContaPagarService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,6 +50,37 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         List<ContaPagaDto> response = contasPagar.stream().map(contaPagar -> mapToDto(contaPagar)).collect(Collectors.toList());
         
         return response;
+    }
+
+    @Override
+    public ContaPagarResponse findAllContaPagar(String fornecedor, String statusPagamento, String responsavel,
+            int pageNo, int pageSize, String sortBy, String sortDir) {
+
+                Specification<Fornecedor> spec = (root, query, criteriaBuilder) ->{
+
+                    List<Predicate> predicates = new ArrayList<>();
+
+                    if(fornecedor != null){
+                        
+                        predicates.add(criteriaBuilder.equal(root.get("fornecedor"), fornecedor));
+                    }
+
+                    if(statusPagamento != null){
+                        
+                        predicates.add(criteriaBuilder.equal(root.get("statusPagamento"), statusPagamento));
+                    }
+
+                    if(responsavel != null){
+                        
+                        predicates.add(criteriaBuilder.equal(root.get("responsavel"), responsavel));
+                    }
+
+
+                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+                };
+       
+        
+        return null;
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
@@ -96,6 +133,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+    
 
     
 }
