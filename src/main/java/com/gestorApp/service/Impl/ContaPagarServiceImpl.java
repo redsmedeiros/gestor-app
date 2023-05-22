@@ -13,8 +13,14 @@ import com.gestorApp.service.ContaPagarService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,10 +79,6 @@ public class ContaPagarServiceImpl implements ContaPagarService {
 
                     List<Predicate> predicates = new ArrayList<>();
 
-                    if(fornecedor != null){
-                        
-                        predicates.add(criteriaBuilder.equal(root.get("fornecedor"), fornecedor));
-                    }
 
                     if(statusPagamento != null){
                         
@@ -113,6 +115,50 @@ public class ContaPagarServiceImpl implements ContaPagarService {
        
         
         return contaPagarResponse;
+    }
+
+    @Override
+    public List<ContaPagaDto> findAllContaByFornecedorid(long fornecedorId, String statusPagamento, String dataVencimento){
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+        
+        List<ContasPagar> contas = contaPagarRepositoy.findByFornecedorId(fornecedorId);
+
+        List<ContaPagaDto> response = contas.stream().map(conta -> mapToDto(conta)).collect(Collectors.toList());
+
+        if(statusPagamento != null){
+
+            return response.stream().filter(conta -> conta.getStatusPagamento().equalsIgnoreCase(statusPagamento)).collect(Collectors.toList());
+        }
+
+
+        if(dataVencimento != null){
+
+            DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+            
+            try {
+
+                Date data = formatoData.parse(dataVencimento);
+
+                return response.stream()
+                    .filter(conta ->{ 
+                        
+                        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+
+                        return formato.format(conta.getDataVencimento()).equals(formato.format(data));
+                    })
+                    .collect(Collectors.toList());
+
+            } catch (ParseException e) {
+
+                System.out.println("Erro ao converter a data de vencimento");
+                return Collections.emptyList(); // ou outra ação apropriada
+            }
+            
+            
+        }
+
+        return response;
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
@@ -163,6 +209,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+   
 
     
 

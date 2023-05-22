@@ -34,6 +34,18 @@ public class ContasPagarController {
 
     }
 
+    @GetMapping("/fornecedor/{fornecedorId}/contas-pagar")
+    public List<ContaPagaDto> getAllContasByFornecedorId(
+     @PathVariable(value = "fornecedorId") long fornecedorId,
+     @RequestParam(required = false) String statusPagamento,
+     @RequestParam(required = false) String dataVencimento
+     ){
+
+          List<ContaPagaDto> response = contaPagarService.findAllContaByFornecedorid(fornecedorId, statusPagamento, dataVencimento);
+
+          return response;
+    }
+
     @GetMapping
     public List<ContaPagaDto> getAllContasPagar(){
 
