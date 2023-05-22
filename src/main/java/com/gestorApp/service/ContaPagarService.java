@@ -14,4 +14,6 @@ public interface ContaPagarService {
     ContaPagarResponse findAllContaPagar(String fornecedor, String statusPagamento, String responsavel, int pageNo, int pageSize, String sortBy, String sortDir);
     
     List<ContaPagaDto> findAllContaByFornecedorid(long fornecedorId, String statusPagamento, String dataVencimento);
+
+    ContaPagaDto findContaById(long fornecedorId, long contaId);
 }

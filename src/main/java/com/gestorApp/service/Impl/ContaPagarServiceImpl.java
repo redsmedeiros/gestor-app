@@ -128,7 +128,7 @@ public class ContaPagarServiceImpl implements ContaPagarService {
 
         if(statusPagamento != null){
 
-            return response.stream().filter(conta -> conta.getStatusPagamento().equalsIgnoreCase(statusPagamento)).collect(Collectors.toList());
+            response = response.stream().filter(conta -> conta.getStatusPagamento().equalsIgnoreCase(statusPagamento)).collect(Collectors.toList());
         }
 
 
@@ -140,7 +140,7 @@ public class ContaPagarServiceImpl implements ContaPagarService {
 
                 Date data = formatoData.parse(dataVencimento);
 
-                return response.stream()
+                response = response.stream()
                     .filter(conta ->{ 
                         
                         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -159,6 +159,21 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         }
 
         return response;
+    }
+
+    @Override
+    public ContaPagaDto findContaById(long fornecedorId, long contaId) {
+
+        ContasPagar conta = contaPagarRepositoy.findById(contaId).orElseThrow(()-> new ResourceNotFoundException("contaPagarId", "id", contaId));
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+        
+        if(conta.getFornecedor().getId().equals(fornecedor.getId())){
+
+
+        }
+
+        return null;
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
@@ -209,6 +224,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+    
 
    
 
