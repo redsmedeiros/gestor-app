@@ -11,8 +11,6 @@ public class ContaPagaDto {
 
     private long id;
 
-    private String fornecedor;
-
     private Date dataEmissao;
 
     private Date dataVencimento;

@@ -11,14 +11,11 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "conta_pagar", uniqueConstraints = {@UniqueConstraint(columnNames = {"fornecedor"})})
+@Table(name = "conta_pagar")
 public class ContasPagar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(name = "fornecedor")
-    private String fornecedor;
 
     @Column(name = "data_emissao")
     private Date dataEmissao;
@@ -44,7 +41,7 @@ public class ContasPagar {
     @Column(name = "metodo_pagamento")
     private String metodoPagamento;
 
-    @Column(name = "numero_referencia")
+    @Column(name = "numero_referencia", unique = true)
     private String numeroReferencia;
 
     @Column(name = "notas")
@@ -61,4 +58,8 @@ public class ContasPagar {
 
     @Column(name = "data_pagamento")
     private Date dataPagamento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fornecedor_id", nullable = false)
+    private Fornecedor fornecedor;
 }

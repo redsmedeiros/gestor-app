@@ -60,7 +60,7 @@ public class ContaPagarServiceImpl implements ContaPagarService {
     public ContaPagarResponse findAllContaPagar(String fornecedor, String statusPagamento, String responsavel,
             int pageNo, int pageSize, String sortBy, String sortDir) {
 
-                Specification<Fornecedor> spec = (root, query, criteriaBuilder) ->{
+                Specification<ContasPagar> spec = (root, query, criteriaBuilder) ->{
 
                     List<Predicate> predicates = new ArrayList<>();
 
@@ -111,7 +111,6 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         ContasPagar contasPagar = new ContasPagar();
 
         contasPagar.setId(contaPagaDto.getId());
-        contasPagar.setFornecedor(contaPagaDto.getFornecedor());
         contasPagar.setDataEmissao(contaPagaDto.getDataEmissao());
         contasPagar.setDataVencimento(contaPagaDto.getDataVencimento());
         contasPagar.setDescricao(contaPagaDto.getDescricao());
@@ -137,7 +136,6 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         ContaPagaDto contaPagaDto = new ContaPagaDto();
 
         contaPagaDto.setId(contasPagar.getId());
-        contaPagaDto.setFornecedor(contasPagar.getFornecedor());
         contaPagaDto.setDataEmissao(contasPagar.getDataEmissao());
         contaPagaDto.setDataVencimento(contasPagar.getDataVencimento());
         contaPagaDto.setDescricao(contasPagar.getDescricao());
