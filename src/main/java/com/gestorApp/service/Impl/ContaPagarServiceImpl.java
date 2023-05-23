@@ -252,9 +252,35 @@ public class ContaPagarServiceImpl implements ContaPagarService {
             conta.setPrioridade(contaPagaDto.getPrioridade());
         }
 
-        
+        if(conta.getResponsavel() != null){
 
-        return null;
+            conta.setResponsavel(contaPagaDto.getResponsavel());
+        }
+
+        if(conta.getDataPagamento() != null){
+
+            conta.setDataPagamento(conta.getDataPagamento());
+        }
+ 
+        ContasPagar updatedConta = contaPagarRepositoy.save(conta);
+
+        return mapToDto(updatedConta);
+    }
+
+    @Override
+    public void deleteContaById(long fornecedorId, long contaPagarId) {
+       
+        ContasPagar conta = contaPagarRepositoy.findById(contaPagarId).orElseThrow(()-> new ResourceNotFoundException("contaPagarId", "id", contaPagarId));
+
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId).orElseThrow(()-> new ResourceNotFoundException("fornecedorId", "id", fornecedorId));
+        
+        if(!conta.getFornecedor().getId().equals(fornecedor.getId())){
+
+            throw new GestorApiException(HttpStatus.BAD_REQUEST, "Conta não pertence ao fornecedor");
+        }
+
+        contaPagarRepositoy.delete(conta);
+        
     }
 
     private ContasPagar mapToEntity(ContaPagaDto contaPagaDto){
@@ -305,6 +331,8 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         return contaPagaDto;
 
     }
+
+  
 
   
 

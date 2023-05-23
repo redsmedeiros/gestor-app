@@ -2,14 +2,17 @@ package com.gestorApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.DeleteExchange;
 
 import com.gestorApp.payload.ContaPagaDto;
 import com.gestorApp.payload.ContaPagarResponse;
@@ -69,5 +72,21 @@ public class ContasPagarController {
           ContaPagaDto response = contaPagarService.findContaById(fornecedorId, contaPagarId);
 
           return new ResponseEntity<>(response, HttpStatus.OK);
+   }
+
+   @PutMapping("/fornecedor/{fornecedorId}/contas-pagar/{contaPagarId}")
+   public ResponseEntity<ContaPagaDto> updateContaPagar(@PathVariable(value = "fornecedorId") long fornecedorId, @PathVariable(value = "contaPagarId") long contaPagarId, @RequestBody ContaPagaDto contaPagaDto){
+
+          ContaPagaDto response = contaPagarService.updateContaById(fornecedorId, contaPagarId, contaPagaDto);
+
+          return new ResponseEntity<>(response, HttpStatus.OK);
+   }
+
+   @DeleteExchange("/fornecedor/{fornecedorId}/contas-pagar/{contaPagarId}")
+   public ResponseEntity<String> deleteContaPagar(@PathVariable(value = "fornecedorId") long fornecedorId, @PathVariable(value = "contaPagarId") long contaPagarId){
+
+          contaPagarService.deleteContaById(fornecedorId, contaPagarId);
+
+          return new ResponseEntity<String>("Deletado com sucesso", HttpStatus.OK);
    }
 }

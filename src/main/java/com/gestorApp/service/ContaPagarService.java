@@ -18,4 +18,6 @@ public interface ContaPagarService {
     ContaPagaDto findContaById(long fornecedorId, long contaId);
 
     ContaPagaDto updateContaById(long fornecedorId, long contaPagarId, ContaPagaDto contaPagaDto);
+
+    void deleteContaById(long fornecedorId, long contaPagarId);
 }
