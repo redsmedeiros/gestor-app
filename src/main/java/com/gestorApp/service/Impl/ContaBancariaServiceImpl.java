@@ -2,10 +2,13 @@ package com.gestorApp.service.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import java.util.stream.Collectors;
 
-import com.gestorApp.entity.ContasPagar;
+import com.gestorApp.exception.ResourceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -75,6 +78,55 @@ public class ContaBancariaServiceImpl implements ContaBancariaService{
         return response;
     }
 
+    @Override
+    public ContaBancariaDto updateContaBancaria(long contaBancariaId, ContaBancariaDto contaBancariaDto) {
+
+        ContaBancaria conta = contaBancariaRepository.findById(contaBancariaId).orElseThrow(()-> new ResourceNotFoundException("contaBancariaId", "id", contaBancariaId));
+       
+        ContaBancaria contaExists = contaBancariaRepository.findByNumeroConta(contaBancariaDto.getNumeroConta());
+
+        if(contaExists != null){
+
+            throw new EntityNotFoundException("Número de conta já cadastrado");
+        }
+
+        if(contaBancariaDto.getBanco() != null){
+
+            conta.setBanco(contaBancariaDto.getBanco());
+        }
+
+        if(contaBancariaDto.getAgencia() != null){
+
+            conta.setAgencia(contaBancariaDto.getAgencia());
+        }
+
+        if(contaBancariaDto.getNumeroConta() != null){
+
+            conta.setNumeroConta(contaBancariaDto.getNumeroConta());
+        }
+
+        ContaBancaria updatedConta = contaBancariaRepository.save(conta);
+
+
+        return mapToDto(updatedConta);
+    }
+
+    @Override
+    public ContaBancariaDto getContaBancariaById(long contaBancariaId) {
+
+        ContaBancaria conta = contaBancariaRepository.findById(contaBancariaId).orElseThrow(()-> new ResourceNotFoundException("contaBancariaId", "id", contaBancariaId));
+        
+        return mapToDto(conta);
+    }
+
+    @Override
+    public void deleteContaBancariaById(long contaBancariaId) {
+        
+        ContaBancaria conta = contaBancariaRepository.findById(contaBancariaId).orElseThrow(()-> new ResourceNotFoundException("contaBancariaId", "id", contaBancariaId));
+
+        contaBancariaRepository.delete(conta);
+    }
+
     private ContaBancaria mapToEntity(ContaBancariaDto contaBancariaDto){
 
         ContaBancaria contaBancaria =  new ContaBancaria();
@@ -100,6 +152,12 @@ public class ContaBancariaServiceImpl implements ContaBancariaService{
 
         return contaBancariaDto;
     }
+
+    
+
+    
+
+    
 
     
     

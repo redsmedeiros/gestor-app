@@ -11,4 +11,6 @@ import com.gestorApp.entity.ContaBancaria;
 public interface ContaBancariaRepository extends JpaRepository<ContaBancaria, Long>{
 
     Page<ContaBancaria> findAll(Specification<ContaBancaria> spec, Pageable page);
+
+    ContaBancaria findByNumeroConta(String numeroConta);
 }

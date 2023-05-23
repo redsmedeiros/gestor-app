@@ -33,7 +33,7 @@ public class ContaBancaria {
     @Column(nullable = false)
     private String agencia;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String numeroConta;
 
     private BigDecimal saldo;
