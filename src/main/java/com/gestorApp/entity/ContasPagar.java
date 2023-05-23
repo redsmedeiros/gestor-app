@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -62,4 +64,7 @@ public class ContasPagar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fornecedor_id", nullable = false)
     private Fornecedor fornecedor;
+
+    @OneToMany(mappedBy = "contasPagar", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Pagamento> pagamento = new HashSet<>();
 }
