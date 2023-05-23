@@ -1,5 +1,9 @@
 package com.gestorApp.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +27,26 @@ public class Pagamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+
+    @Column(nullable = false)
+    private BigDecimal valor;
+
+    @Column(nullable = false)
+    private LocalDate data;
+
+    @Column(nullable = false)
+    private String formaPagamento;
+
+    @Column(nullable = false)
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contasPagar_id", nullable = false)
     private ContasPagar contasPagar;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pagamento_id", nullable = false)
+    private ContaBancaria contaBancaria;
+
+
 }
