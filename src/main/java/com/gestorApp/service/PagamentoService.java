@@ -6,5 +6,7 @@ import com.gestorApp.payload.PagamentoDto;
 
 public interface PagamentoService {
     
-    List<PagamentoDto> getAllPagamentos();
+    List<PagamentoDto> getAllPagamentos(String data, String formaPagamento, String status, int pageNo, int pageSize, String sortBy, String sortDir);
+
+    PagamentoDto updatePagamento(long pagamentoId, PagamentoDto pagamentoDto);
 }
