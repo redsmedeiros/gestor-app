@@ -13,4 +13,6 @@ public interface ContaBancariaRepository extends JpaRepository<ContaBancaria, Lo
     Page<ContaBancaria> findAll(Specification<ContaBancaria> spec, Pageable page);
 
     ContaBancaria findByNumeroConta(String numeroConta);
+
+    ContaBancaria findByBanco(String banco);
 }

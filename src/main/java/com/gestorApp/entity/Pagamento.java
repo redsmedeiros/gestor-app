@@ -34,7 +34,6 @@ public class Pagamento {
     @Column(nullable = false)
     private LocalDate data;
 
-    @Column(nullable = false)
     private String formaPagamento;
 
     @Column(nullable = false)
@@ -45,7 +44,7 @@ public class Pagamento {
     private ContasPagar contasPagar;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pagamento_id", nullable = false)
+    @JoinColumn(name = "contaBancaria_id", nullable = false)
     private ContaBancaria contaBancaria;
 
 

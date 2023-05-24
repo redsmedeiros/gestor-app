@@ -1,26 +1,33 @@
 package com.gestorApp.service.Impl;
 
+import com.gestorApp.entity.ContaBancaria;
 import com.gestorApp.entity.ContasPagar;
 import com.gestorApp.entity.Fornecedor;
+import com.gestorApp.entity.Pagamento;
 import com.gestorApp.enums.StatusPagamento;
 import com.gestorApp.exception.GestorApiException;
 import com.gestorApp.exception.ResourceNotFoundException;
 import com.gestorApp.payload.ContaPagaDto;
 import com.gestorApp.payload.ContaPagarResponse;
+import com.gestorApp.repository.ContaBancariaRepository;
 import com.gestorApp.repository.ContaPagarRepositoy;
 import com.gestorApp.repository.FornecedorRepository;
+import com.gestorApp.repository.PagamentoRepository;
 import com.gestorApp.service.ContaPagarService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +48,12 @@ public class ContaPagarServiceImpl implements ContaPagarService {
     @Autowired
     private FornecedorRepository fornecedorRepository;
 
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
+
+    @Autowired
+    private ContaBancariaRepository contaBancariaRepository;
+
     @Override
     public ContaPagaDto createContaPagar(long fornecedorId ,ContaPagaDto contaPagaDto) {
 
@@ -51,12 +64,63 @@ public class ContaPagarServiceImpl implements ContaPagarService {
         ContasPagar notaExiste = contaPagarRepositoy.findByNumeroReferencia(contaPagaDto.getNumeroReferencia());
 
         if(notaExiste != null){
+            
             throw new EntityNotFoundException("Nota não encontrada");
         }
 
         contaPagar.setFornecedor(fornecedor);
 
         ContasPagar newContaPagar = contaPagarRepositoy.save(contaPagar);
+
+        if(newContaPagar != null){
+
+
+            Pagamento pagamento = new Pagamento();
+
+            BigDecimal valor = BigDecimal.valueOf(newContaPagar.getValorOriginal());
+
+            System.out.println(valor);
+
+            pagamento.setValor(valor);
+
+            LocalDate data = LocalDate.now();
+
+            pagamento.setData(data);
+
+            pagamento.setStatus(newContaPagar.getStatusPagamento());
+
+            pagamento.setContasPagar(newContaPagar);
+
+            ContaBancaria contaBancaria = contaBancariaRepository.findByBanco("Banco do Brasil");
+
+           
+
+            if(contaBancaria == null){
+
+                ContaBancaria novaConta = new ContaBancaria();
+
+                novaConta.setBanco("Banco do Brasil");
+                novaConta.setAgencia("3121-7");
+                novaConta.setNumeroConta("546745-0");
+
+                Double saldo = 0.0;
+
+                BigDecimal saldoBigDecimal = BigDecimal.valueOf(saldo);
+
+                novaConta.setSaldo(saldoBigDecimal);
+
+                ContaBancaria contaBancariaSalva = contaBancariaRepository.save(novaConta);
+
+                pagamento.setContaBancaria(contaBancariaSalva);
+
+            }else{
+
+                pagamento.setContaBancaria(contaBancaria);
+            }
+
+            Pagamento newPagamento = pagamentoRepository.save(pagamento);
+
+        }
 
         return mapToDto(newContaPagar);
     }
@@ -103,6 +167,10 @@ public class ContaPagarServiceImpl implements ContaPagarService {
                 List<ContasPagar> listOfContas = busca.getContent();
 
                 List<ContaPagaDto> content = listOfContas.stream().map(contaPagar -> mapToDto(contaPagar)).collect(Collectors.toList());
+
+                Optional<Double> total = listOfContas.stream().map(ContasPagar::getValorOriginal).reduce(Double::sum);
+
+                System.out.println(total);
 
                 ContaPagarResponse contaPagarResponse = new ContaPagarResponse();
 

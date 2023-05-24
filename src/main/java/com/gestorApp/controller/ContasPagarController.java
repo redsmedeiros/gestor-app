@@ -49,7 +49,7 @@ public class ContasPagarController {
     }
 
 
-   @GetMapping
+   @GetMapping("/contas-a-pagar")
    public ResponseEntity<ContaPagarResponse> findAllContas(
         @RequestParam(required = false) String fornecedor,
         @RequestParam(required = false) String statusPagamento,
