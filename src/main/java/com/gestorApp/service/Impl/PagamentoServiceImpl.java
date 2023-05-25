@@ -1,5 +1,7 @@
 package com.gestorApp.service.Impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.criteria.Predicate;
@@ -14,7 +16,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gestorApp.entity.Pagamento;
+import com.gestorApp.enums.StatusPagamento;
 import com.gestorApp.exception.ResourceNotFoundException;
+import com.gestorApp.payload.ConfirmaPagamentoDto;
 import com.gestorApp.payload.PagamentoDto;
 import com.gestorApp.repository.PagamentoRepository;
 import com.gestorApp.service.PagamentoService;
@@ -55,7 +59,7 @@ public class PagamentoServiceImpl implements PagamentoService{
 
         List<Pagamento> listOfPagamentos = busca.getContent();
 
-        List<PagamentoDto> content = busca.stream().map(pagamento -> mapToDto(pagamento)).collect(Collectors.toList());
+        List<PagamentoDto> content = listOfPagamentos.stream().map(pagamento -> mapToDto(pagamento)).collect(Collectors.toList());
 
         return content;
     }
@@ -64,12 +68,32 @@ public class PagamentoServiceImpl implements PagamentoService{
     public PagamentoDto updatePagamento(long pagamentoId, PagamentoDto pagamentoDto) {
         
         Pagamento pagamento = pagamentoRepository.findById(pagamentoId).orElseThrow(()-> new ResourceNotFoundException("pagamentoId", "id", pagamentoId));
-
+        
         pagamento.setFormaPagamento(pagamentoDto.getFormaPagamento());
-
-        Pagamento updated = pagamentoRepository.save(null);
+        
+        Pagamento updated = pagamentoRepository.save(pagamento);
 
         return mapToDto(updated);
+    }
+
+    @Override
+    public PagamentoDto confirmarPagamento(long pagamentoId, ConfirmaPagamentoDto confirmaPagamentoDto) {
+
+        Pagamento pagamento = pagamentoRepository.findById(pagamentoId).orElseThrow(()-> new ResourceNotFoundException("pagamentoId", "id", pagamentoId));
+        
+        if(confirmaPagamentoDto.isConfirmaPagamento() == true){
+
+            pagamento.setData(LocalDate.now());
+            pagamento.setValor(pagamento.getValor());
+            StatusPagamento status = StatusPagamento.CONCLUIDO;
+            String statusString = status.name();
+            pagamento.setStatus(statusString);
+
+        }
+
+        Pagamento pagamentoConfirmado = pagamentoRepository.save(pagamento);
+
+        return mapToDto(pagamentoConfirmado);
     }
 
     private PagamentoDto mapToDto(Pagamento pagamento) {
@@ -81,6 +105,8 @@ public class PagamentoServiceImpl implements PagamentoService{
         pagamentoDto.setValor(pagamento.getValor());
         return pagamentoDto;
     }
+
+    
 
     
     
